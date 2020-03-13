@@ -6,7 +6,8 @@ services:
     restart: always
     networks:
       - internal_network
-    image: repo.ambar.cloud:443/ambar-mongodb:2.1
+#    image: repo.ambar.cloud:443/ambar-mongodb:2.1
+    build: ./MongoDB/
     environment:
       - cacheSizeGB=2
     volumes:
@@ -17,7 +18,8 @@ services:
     restart: always
     networks:
       - internal_network
-    image: repo.ambar.cloud:443/ambar-es:2.1
+#    image: repo.ambar.cloud:443/ambar-es:2.1
+    build: ./ElasticSearch/
     expose:
       - "9200" 
     environment:
@@ -38,7 +40,8 @@ services:
     restart: always
     networks:
       - internal_network
-    image: repo.ambar.cloud:443/ambar-rabbit:2.1
+#    image: repo.ambar.cloud:443/ambar-rabbit:2.1
+    build: ./Rabbit/
     hostname: rabbit
     expose:
       - "15672"
@@ -51,7 +54,8 @@ services:
       - net.core.somaxconn=1024
     networks:
       - internal_network
-    image: repo.ambar.cloud:443/ambar-redis:2.1
+    #image: repo.ambar.cloud:443/ambar-redis:2.1
+    build: ./Redis/
     expose:
       - "6379" 
   serviceapi:
@@ -67,7 +71,8 @@ services:
     restart: always
     networks:
       - internal_network
-    image: repo.ambar.cloud:443/ambar-serviceapi:2.1
+#    image: repo.ambar.cloud:443/ambar-serviceapi:2.1
+    build: ./ServiceApi/
     expose:
       - "8081"  
     environment:            
@@ -86,7 +91,8 @@ services:
     restart: always
     networks:
       - internal_network
-    image: repo.ambar.cloud:443/ambar-webapi:2.1
+    #image: repo.ambar.cloud:443/ambar-webapi:2.1
+    build: ./WebApi
     expose:
       - "8080"
     ports:
@@ -105,7 +111,8 @@ services:
     depends_on:
       webapi:
         condition: service_healthy
-    image: repo.ambar.cloud:443/ambar-frontend:2.1
+#    image: repo.ambar.cloud:443/ambar-frontend:2.1
+    build: ./FrontEnd/
     restart: always
     networks:
       - internal_network
@@ -119,7 +126,8 @@ services:
     depends_on: 
       serviceapi: 
         condition: service_healthy                            
-    image: repo.ambar.cloud:443/ambar-pipeline:2.1
+#    image: repo.ambar.cloud:443/ambar-pipeline:2.1                
+    build: ./Pipeline/
     restart: always
     networks:
       - internal_network  
@@ -127,18 +135,21 @@ services:
       - id=0
       - api_url=http://serviceapi:8081
       - rabbit_host=amqp://rabbit
-  ${crawlerName}:
+  my-files:
     depends_on: 
       serviceapi: 
         condition: service_healthy 
-    image: repo.ambar.cloud:443/ambar-local-crawler:2.1
+#    image: repo.ambar.cloud:443/ambar-local-crawler:2.1
+    build: ./LocalCrawler/
     restart: always
     networks:
       - internal_network
     expose:
       - "8082"
     environment:      
-      - name=${crawlerName}
+      - name=my-files
+      - maxFileSize=100mb
+      - ignoreExtensions=.{exe,dll,rar}
     volumes:
       - ${pathToCrawl}:/usr/data
 
