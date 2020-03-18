@@ -150,6 +150,7 @@ services:
       - name=my-files
       - maxFileSize=100mb
       - ignoreExtensions=.{exe,dll,rar}
+      - apiUrl=http://serviceapi:8081
     volumes:
       - ${pathToCrawl}:/usr/data
 

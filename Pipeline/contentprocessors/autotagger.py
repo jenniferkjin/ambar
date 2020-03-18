@@ -16,6 +16,9 @@ class AutoTagger:
         self.SetSourceIdTag(AmbarFile)
         self.SetArchiveTag(AmbarFile)
         self.SetImageTag(AmbarFile)
+        self.SetTextTag(AmbarFile)
+        self.SetAudioTag(AmbarFile)
+        self.SetVideoTag(AmbarFile)
 
         for rule in self.GetTaggingRules():
             self.ProcessTaggingRule(rule, AmbarFile)
@@ -68,6 +71,19 @@ class AutoTagger:
     def SetImageTag(self, AmbarFile):
         if ContentTypeAnalyzer.IsImageByContentType(AmbarFile['content']['type']):
             self.AddTagToAmbarFile(AmbarFile['file_id'], AmbarFile['meta']['full_name'], self.AUTO_TAG_TYPE, 'image')
+
+    def SetTextTag(self, AmbarFile):
+        if ContentTypeAnalyzer.IsTextByContentType(AmbarFile['content']['type']):
+            self.AddTagToAmbarFile(AmbarFile['file_id'], AmbarFile['meta']['full_name'], self.AUTO_TAG_TYPE, 'text')
+
+    def SetAudioTag(self, AmbarFile):
+        if ContentTypeAnalyzer.IsAudioByContentType(AmbarFile['content']['type']):
+            self.AddTagToAmbarFile(AmbarFile['file_id'], AmbarFile['meta']['full_name'], self.AUTO_TAG_TYPE, 'audio')
+
+    def SetVideoTag(self, AmbarFile):
+        if ContentTypeAnalyzer.IsVideoByContentType(AmbarFile['content']['type']):
+            self.AddTagToAmbarFile(AmbarFile['file_id'], AmbarFile['meta']['full_name'], self.AUTO_TAG_TYPE, 'video')
+
 
     def AddTagToAmbarFile(self, FileId, FullName, TagType, Tag):
         apiResp = self.apiProxy.AddFileTag(FileId, TagType, Tag)
